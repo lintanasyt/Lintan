@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesan Untuk Teman Magang</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Selamat Datang, Pilih Nama Teman Magang</h2>
+
+    <ul id="nameList">
+        <li><a href="#" onclick="showPassword('Ellen')">Ellen</a></li>
+        <li><a href="#" onclick="showPassword('Puput')">Puput</a></li>
+        <li><a href="#" onclick="showPassword('Cinta')">Cinta</a></li>
+        <li><a href="#" onclick="showPassword('Friska')">Friska</a></li>
+        <li><a href="#" onclick="showPassword('Duyi')">Duyi</a></li>
+        <li><a href="#" onclick="showPassword('Vaness')">Vaness</a></li>
+        <li><a href="#" onclick="showPassword('Wastu')">Wastu</a></li>
+        <li><a href="#" onclick="showPassword('Ferdi')">Ferdi</a></li>
+        <li><a href="#" onclick="showPassword('Ekhsan')">Ekhsan</a></li>
+        <li><a href="#" onclick="showPassword('Daffa')">Daffa</a></li>
+        <li><a href="#" onclick="showPassword('Maul')">Maul</a></li>
+        <li><a href="#" onclick="showPassword('Ichsan')">Ichsan</a></li>
+        <li><a href="#" onclick="showPassword('Haekal')">Haekal</a></li>
+        <li><a href="#" onclick="showPassword('Salman')">Salman</a></li>
+    </ul>
+
+    <div id="passwordForm" style="display:none;">
+        <div class="input-group">
+            <label for="passwordInput">Masukkan Password</label>
+            <input type="password" id="passwordInput" placeholder="Password">
+        </div>
+        <button class="btn" onclick="checkPassword()">Masuk</button>
+    </div>
+
+    <div class="message" id="message"></div>
+</div>
+
+<script>
+    const correctPasswords = {
+        'Ellen': '1234',
+        'Puput': '5678',
+        'Cinta': '91011',
+        'Friska': '121314',
+        'Duyi': '151617',
+        'Vaness': '181920',
+        'Wastu': '212223',
+        'Ferdi': '242526',
+        'Ekhsan': '272829',
+        'Daffa': '303132',
+        'Maul': '333435',
+        'Ichsan': '363738',
+        'Haekal': '394041',
+        'Salman': '424344'
+    };
+
+    let currentName = '';
+
+    function showPassword(name) {
+        currentName = name;
+        document.getElementById('passwordForm').style.display = 'block';
+        document.getElementById('message').innerHTML = '';
+    }
+
+    function checkPassword() {
+        const passwordInput = document.getElementById('passwordInput').value;
+        if (passwordInput === correctPasswords[currentName]) {
+            document.getElementById('message').innerHTML = `Selamat datang, ${currentName}! Ini pesanmu: <strong>Semoga sukses di masa depan! Terus semangat!</strong>`;
+        } else {
+            document.getElementById('message').innerHTML = 'Password salah, coba lagi.';
+        }
+    }
+</script>
+
+</body>
+</html>
