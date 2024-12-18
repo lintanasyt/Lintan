@@ -9,7 +9,12 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(to bottom right, #87CEEB, #9370DB);
+            background: linear-gradient(to bottom right,  rgba(135, 206, 235, 0.6), rgba(147, 112, 219, 0.6)),
+                        url('https://i.imgur.com/wI4ppGQ.jpeg?2');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-blend-mode: overlay;
             color: #333;
             display: flex;
             justify-content: center;
@@ -27,18 +32,6 @@
             text-align: center;
         }
 
-        h2 {
-            margin-bottom: 20px;
-            color: #6A5ACD;
-        }
-
-        .button-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-        }
-
         .btn-name {
             background: linear-gradient(135deg, #87CEFA, #BA55D3);
             color: white;
@@ -47,113 +40,173 @@
             font-size: 16px;
             border-radius: 20px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease;
+            margin: 5px;
         }
 
         .btn-name:hover {
             transform: scale(1.1);
-            background: linear-gradient(135deg, #6495ED, #DA70D6);
         }
 
-        .input-group {
-            margin-top: 20px;
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
         }
 
-        .input-group input {
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 300px;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        input {
             width: 80%;
             padding: 10px;
-            border: 2px solid #BA55D3;
-            border-radius: 6px;
-            font-size: 16px;
+            margin-bottom: 10px;
+            border-radius: 5px;
         }
 
         .btn-submit {
             background-color: #6A5ACD;
             color: white;
-            padding: 10px 20px;
+            padding: 10px;
             border: none;
-            border-radius: 6px;
+            border-radius: 5px;
             cursor: pointer;
-            margin-top: 10px;
-            transition: background 0.3s ease;
         }
 
         .btn-submit:hover {
             background-color: #836FFF;
         }
 
-        .message {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #6A5ACD;
-            font-weight: bold;
+        .error-message {
+            color: red;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .message-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            text-align: left;
+            position: relative;
+        }
+
+        .back-btn {
+            background-color: #BA55D3;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            position: absolute;
+            bottom: -50px;
+            right: 10px;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Selamat Datang, Pilih Nama Teman Magang</h2>
-    <div class="button-list" id="nameList">
-        <button class="btn-name" onclick="showPassword('Ellen')">Ellen</button>
-        <button class="btn-name" onclick="showPassword('Puput')">Puput</button>
-        <button class="btn-name" onclick="showPassword('Cinta')">Cinta</button>
-        <button class="btn-name" onclick="showPassword('Friska')">Friska</button>
-        <button class="btn-name" onclick="showPassword('Duyi')">Duyi</button>
-        <button class="btn-name" onclick="showPassword('Vaness')">Vaness</button>
-        <button class="btn-name" onclick="showPassword('Wastu')">Wastu</button>
-        <button class="btn-name" onclick="showPassword('Ferdi')">Ferdi</button>
-        <button class="btn-name" onclick="showPassword('Ekhsan')">Ekhsan</button>
-        <button class="btn-name" onclick="showPassword('Daffa')">Daffa</button>
-        <button class="btn-name" onclick="showPassword('Maul')">Maul</button>
-        <button class="btn-name" onclick="showPassword('Ichsan')">Ichsan</button>
-        <button class="btn-name" onclick="showPassword('Haekal')">Haekal</button>
-        <button class="btn-name" onclick="showPassword('Salman')">Salman</button>
-    </div>
-
-    <div class="input-group" id="passwordForm" style="display:none;">
-        <label for="passwordInput">Masukkan Password</label><br>
-        <input type="password" id="passwordInput" placeholder="Password">
-        <button class="btn-submit" onclick="checkPassword()">Masuk</button>
-    </div>
-
-    <div class="message" id="message"></div>
+<div class="container" id="nameContainer">
+    <h2>Welcome in Lintan Area, Choose ur name BESTIEH🧐</h2>
+    <div id="buttonList"></div>
 </div>
 
+<div class="modal" id="passwordModal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <label for="passwordInput">Masukkan Password</label><br>
+        <input type="password" id="passwordInput" placeholder="Password" onkeydown="checkEnter(event)">
+        <button class="btn-submit" onclick="checkPassword()">Submit</button>
+        <div class="error-message" id="errorMessage">Loh kok salah bestieeh 🤭</div>
+    </div>
+</div>
+
+<div id="message" style="text-align: center;"></div>
+
 <script>
-    const correctPasswords = {
-        'Ellen': { password: '1234', message: 'Terima kasih Ellen! Semangat terus ya, kamu hebat!, Len semangat ya I love U, nnt kalau ada apa apa sama Salman cerita aja, tapi klo semkin kesana makin okee, gass semogaa apapun itu yang terbaik buat lu ya lenn' },
-        'Puput': { password: '5678', message: 'Puput, terima kasih atas bantuannya selama ini! Sukses selalu!' },
-        'Cinta': { password: '91011', message: 'Cinta, tetap ceria dan semangat mengejar impian ya!' },
-        'Friska': { password: '121314', message: 'Friska, kamu luar biasa! Teruslah menjadi inspirasi!' },
-        'Duyi': { password: '151617', message: 'Duyi, semoga kariermu semakin bersinar. Terima kasih!' },
-        'Vaness': { password: '181920', message: 'Vaness, semangatmu bikin tim solid! Terima kasih banyak!' },
-        'Wastu': { password: '212223', message: 'Wastu, kerja kerasmu patut dicontoh! Sukses selalu!' },
-        'Ferdi': { password: '242526', message: 'Ferdi, kamu orang yang hebat. Tetap rendah hati dan berprestasi!' },
-        'Ekhsan': { password: '272829', message: 'Ekhsan, terima kasih atas dedikasimu. Semangat terus!' },
-        'Daffa': { password: '303132', message: 'Daffa, jangan berhenti bermimpi! Sukses selalu ya.' },
-        'Maul': { password: '333435', message: 'Maul, terima kasih sudah jadi tim yang luar biasa!' },
-        'Ichsan': { password: '363738', message: 'Ichsan, masa depanmu cerah! Teruslah berjuang!' },
-        'Haekal': { password: '394041', message: 'Haekal, semangat terus untuk karier dan masa depanmu!' },
-        'Salman': { password: '424344', message: 'Salman, kamu keren banget! Terima kasih sudah membantu!' }
+    const friends = {
+        'Ellen': { password: '1234', message: 'CIEEEE LAGIII BUKAA NI YEE......Ellen!!! makasi banyak ya Ellen udah jadi bestie pertama, maafin ya len kalau ada salah salah kata, tp percaya la gua g ada niat buruk ke elu, maaf kalau seandainya ada candaan yang keterlaluan atau apapun itu, but i love u soo much babe, kan sekarang udah ada pacar yaaa.., semoga langgeng yaa.., dan kalau nanti ada apa apa cerita ajaa yak len, kalau nauzubillah nanti ada masalah lu sama Salman, gua bakal jadi orang pertama yang bakal ttp bela lu, karena lu baik len lu deserve get something special (TAPI GOSAH SENYUM SENYUM LU BACANYA), len nanti kalau sempat di yogya kita Maennn yaw, semogaa kedepannya sukses terus, dan semoga diperlancar lulusnya, cari kerjanya, nikahnya, punya anaknya, dan lainnya, sukses dunia akhirat yak len, makasi ya len tiap hari bisa bikin gua ketawa sampe ga abis piker, makasi juga udah gibah bareng, semoga dosa dosa kita cepet ilang yaa🥹. semangat yak LDRnya, insyaallah kalo jodoh mah gas aja, HAPPY TERUS YAK LEN, semoga kedepannya semakin banyak kebahagiaan disbanding kesulitan dan tangisa ANJAY🥰🥰, makasi juga loh len dan banyak bantu proyel magang gueee, dah ajarin gua, dah ngertiin gua, baik sm gue, semogaa nanti bisa dapetin dream company lu yak BESTIEE....Semoga pak Danang bangga sama kita yakwkkw' },
+        'Puput': { password: '5678', message: 'CIEEEE LAGIII BUKAA NI YEE.....Puputtttt !!!!. Makasih banyak yak Putt udah mau jadi temen akuu, walaupun pasti kamu juga shock liat aku ngomong kasar terus, bercanda terus, tapi percaya la niat aku g ada untuk memojokan tapi utamanya adalah biar ya kita santai aja, terbiasa.. dan kalau ternyata malah ada ending yg menurut kamu buruk, maafin aku yak Puttttt, makasii loo kamu dah selalu berusaha ttp ikut main, padhal kamu aja susah iizin mama km, makasii jugaa dah bolehin aku nginepp🥰🥰, semogaa kamu kedepannya bisa dptin cowo yang bener bener bisa ngertiin kamu smpe akhirnya kamu yakin dia bisa jadi pasangan kamu dan temen hidup kamu, jadi belajar jngn membatasi diri sm cowo yak Putt, takutnya jodoh kamu malah menjauh dan mengulur Waktu, aku yakin pasti Allah bakal ngasih yang terbaik buat kamu, dan kalauuu kedepannya ada cowo yang g baik juga anggep aja itu pelajaran ya put, biar kedepannya km bisa lebih tau cowo gmn, tp g nutup kemungkinan km lansung ketemu cowo yang baik kok, jadiii smngtt yak putt, semoga kedepannya dilancarinn lulusnya, kerjanya, jodohnya, nikahnya, punya anaknya, I lovee U Puputttt🥰🥰💕, kalo nikah undang undang yaa wkw' },
+        'Cinta': { password: '91011', message: 'CIEEEE LAGIII BUKAA NI YEE.....Cintaaa !!!. Makasii yaaa udah jadi tmn gueee, soo cutieee looh.. keren bangett lu padahal jrng bisa ikut kita main ttp lu ttp bisa berbaur dengn baik sm ank ank lain, makasii jugaa udh sering gibah sm guee wkkw, semoga dosa kita cepet ilangg yak wkwkwk anjeng, makasii juga sering dngrin curhatan gue, makasi juga klo ketawa nularr wkwk, semogaa kedepannya happy happy trs ya, seru kan punya tmn kek gua heheheheh NGAKAKKAK, semogaa lancer ya kedepnnya lulusnya, kerjanya, nikahnya, punya anaknya, jangan lupa undang lohhh klo nikahh..., soalnya gua blm pernh liat gerik HAHHAHA, eh tolong ya klo ada apa apa ellen.., semoga apa yang kita pikirin selama ini salah yaaa.. jadi ga enak anj, tqq yak CINTAHHH, gua g espect lu sekeren itu brooh, SNM UGM HAHAHA canda, mksdnya projek luu, dan cara komunikasi lu sm tmn tmn lu, harusnya tmn tmn UGM LO seneng si pnya tmn kek elu, yang g seneng sm lo brrti tolol OKE. lovee u babe🥰🥰🧐🥰🤩💕💘. JANGAN LUPA SOLAT ANJENG, semoga gerik baca ini ya, yuk rik tolong dituntun si CINTA ahhahah, semogaa lancar trs yaa CIN kedepannya, kalo ada apa apa berkabar ya babe. LOP U jangan sampe menguappp 💕' },
+        'Friska': { password: '121314', message: 'CIEEEE LAGIII BUKAA NI YEE.....FRISKAAAA !!!!!!!. Maaf ya g ada foto lu hehehehh, FRISKAAAA !!!!!!!. Makasii yaa udah bela belain dari depok ke bogorr demi ikutt Vilaa, keren parah coyy, makasii ya Fris dah jadi tmn guee, keren amat lu yak awal awal dah ngerangkul yang lain..., kerenn dah si archii yang satu iniii, semangatt yak, sukses terus yak Friss keren bett luuu. semoga lancer trs yak, S2nya, lulusnya, jodohnya, nikahnya, punya anaknya wkwkkw, jangan lupa undang lohhh klo nikahhh, awas aja, sampe ketemu lagii ya friss, maaf ya klo awal awal gua g ajak ngobrol lu, soalnya kdng gua Lelah wkwkwk, tp kek lu dah baik bnrrr sm gueee, lovee u frisskaaa, semngatt yak babe kejar matahari luuu wkwkkwkwkw NGAKAKAK (GA PEDULI LAH KALI INI LU BECANDA ATAU ENGGA) akwkwk ngakak....nantii klo gua buat rumah kasi rekom design rumah minimalis dongg friss wkkwkw, kpn kpn ajak gua ke toraja dong, penasaran gua kek mn si orang toraja ni, apa jngn jgn kek lu semua ya modelnya wkkw. semogaa lu bahagia yee punya tmn kek guee wkkwkw, kocak lu wkkw, dann jangan luapin guaaa yekk friswkwkw, siapa tau kita ketemu lg di depok wkwk. oh ya gmn hari terkhir ni mo confest g niii wkkwkw, gas gua bantuu, eh makasii loo udah bantu editt yang feed warga 20 keren amat dah wkwk jd bagus wkwk' },
+        'Duyi': { password: '151617', message: 'CIEEEE LAGIII BUKAA NI YEE.....DUYIIIIII!!!!. Makasiii yaaa awalnya gua kira kita g bakal nyambung bngttt tapii pas kita sekelompok engagement ternyata kita bisa ketawa ketawa barenggg, maaf ya kalau selama ini aku sm yang lain masi blm bisaa buat km lebih nyaman lagi, tapii makasii bngtt udah bbrp kalii cerita cerita tentang km, makasii jugaa lo udah lumayan ubah mindset aku tentang hidup sehat, teratur, lurus lah pokoknya, dan pastinyaa aku pengen bngtt bisa belajar kaya kamu. Semogaa kamu terus Happy yaa Duyii… dann akuu pengen bangett liat km nnt sm cowo kamu nntnya🥰🥰, semoga lancar terus yak kedepannya lulusnya, kerjanya, jodohnya, nikahnya, kalau nikah jangan lupa kabarin yaa, apapun yang terbaik buat lu semoga lancar yaa Duyiii❤, keren bngtt lohh projek kamuu, pdhl km anak magang pdhl tdnya harus pake API🥰🥰, semoga apa yang kurang di magang kali ini bisa dijadiin pljrn aja yakk aku yakin kedepannya km bisa la milih milih mana yang baik untuk kamu 🥰🥰' },
+        'Vaness': { password: '181920', message: 'CIEEEE LAGIII BUKAA NI YEE.....Vanessssss!!!. Makasii yakk udahh berani ajak ngobrol kita dluan, smpe akhirnya kita bisaa lebih dekett🥰🥰🥰, makasii jugaa lo makanan gratisnyaa, maaff yaa kloo kesannya bbrp kalii kaaya suka lupa lu, tapi jujurly kitaa klo lg ada obrolan pasti ada aja kok ngomongin ke kocakan luu kmren gmn atau apa, tp emg kadang klo ke warteg atau apa pasti kek dadakan juga jd g ada niat lupain, soooooo semngtttt trss yakk ness kerjanyaaa🥰🥰, yuk gebet semua GM dan direktur wkwk🥰🥰, biar dptt lebihan kwkkw, kerenn loo udh diajak GM ae wkwk, oh yaaa yang bnrr ya nnt klo punyaa cowooooo jan mo digoblokin wkwkwk, lu baikk ness tapii jangan goblok yakk❤, semoga kedepannya lancarr trss..lulusnya, kerjanyaa, jodohnya, nikah jangan lupa ngundang weee kabarinnn.. semoga kedepannya happy trss yakk🥰🥰🥰, sabar sabar dan sm mentorr luu yakk bisa pastii dan kerenn parahh coyy🥰🥰' },
+        'Wastu': { password: '212223', message: 'CIEEEE LAGIII BUKAA NI YEE.....WASTUU!! Hii broo tq yaa dah welcome batt loch.., tq juga udah bbrp kali luangin waktu buat main bareng sm mentemen, makasi dah akrab sm semuanya kerenn batt broo HAHAHAH, tq bro udah bisa diajak kerja sama bat bro, lancar trs kedepannya semoga kedepannya menjadi orang yang lebih bener ya HAHAHAH NGAKAKAK, semoga dilancarin lulusnya, kerjanya, semoga tercapai bisnismennya, kabarin klo nikah ya🤩🤩🤩🤩, langgeng trs broo… ga sabar ketemu lgg sm lu ellen gua hahhaah pasti ngakak GAKUAT wkwkw, THX BROOOH. Jadi adek kelas yang baik yak dek.. keren loo lu orang yang jarang gua liat yang kalo ketemu orang tua sopan Pwol, klo diajak bercanda sngt menyesuaikan orangnya ANJY GOSAH SENYUM SENYUM lO, smngttt bro kuliyehnya.. lancar juga bandnya, oh yaa gua g sabar liat lu nnt g tau kpn, soanya dlu lu sempet gemuk, skrng kurus, next gmn yee HAHAHAHA NGAKAK.. thx ya bro udh jd teman kurang ajar HAHAHHAH ga kok baek baek🗣🗣🗣' },
+        'Ferdi': { password: '242526', message: 'CIEEEE LAGIII BUKAA NI YEE.....FERDIII!! Tqq broo udah bertahan sampe saat ini, maaf ya fer klo gua ada salah salah kata atau kesannya jahat, maafin juga yang laen klo ada yang tidak mengenakann, gua tauu lo kerenn broo tunjukin broo kloo lu kerenn wkwk, ohh yaa tq yak broo klo apa apa ttp ikutt biar semkinn kenal satu sama laen, maaf ya kalau bbrp dari kita mungkin ada yang g cocok, tp mnurut gua it’s okay, the next step pasti lo bisa nemuin orang yang sangtt cocok sm lu broo, karena pas lu ketemu orang yg selera humornya sama pasti seneng rasanya.. sukses trs broo, gua bakal doain selalu yang terbaik buat lo bro.. suskses selalu yaa lancar lulusnya, semogaa cpt ketemu jodohnya jugaa yak broo, kerjanyaaa juga, klo nikah berkabar brooo, gua yakinn lo sukses di masa depann broo🤩🤩🤩🤩, oh yaa ferr maafin gua bngtt yaa gua jg g enak sm luu, tp mungkin bbrp kli memang kita g sefrekuensi, tapii guaa ttp seneng klo luu bahagiaa nextnyaa broo suksess selaluu broooooo wish uu all the bestt, jangan lupaaa bljrr dketin cewe yak broo karena hidup tanpa cinta bagai taman tak berbungaaa🗣🗣🗣🤩🤩🤩😁' },
+        'Ekhsan': { password: '272829', message: 'CIEEEE LAGIII BUKAA NI YEE.....EKHSANN!!, heyy brooo tqq takk udahh jadii tmn baekk wkwkwk, gr gr lu gua jadii pengen bnr bnr bljrr saham loh HAHAHHAH, tapii ya walaupun masi blmm terealisasi yak broo, oh yaa keren lu broo bisa naruh uang dengan resikoo tinggi, gua yakin bett pas lu dah berkeluarga pasti lu ngertii bat dah tuu ngelola financial lu bro.. good job broo, oh yaa jngn lupa bljr deketin ceweek broo lu harus tauu kpn cewe bnrn tertarik atau engga sm luu broo, jngn akademik trss brokk, work life balence lahh ANJYYY. Tapi gua yakin ada saatnya lu nnt akan jadi orang kerenn yang udh tau bngtt lah bnyk hall uang, cinta, cewek, soo confident dluu ajaa broo, bntr lg luluss nii lancar lancarr yak, kerjanya.., jodohnya.. klo nikah jngn lupa berkabar Broo🤩🤩🤩, ohh yaa keren broo udh bisa bertahan sm Ferdi wkwk, tapii yydh la yaaa mungkin emg g sefrekuensii aja broo, nnt juga dia bakal nemuin gengg yang bnr bnr selera humornya sama yak, soo semoga kelarnya magang inii luu bisa happy trs yak broo' },
+        'Salman': { password: '303132', message: 'CIEEEE LAGIII BUKAA NI YEE.....Salmannnn🗣🗣🗣, tq yak broo udah mendekat ke kitaa sm akhirnya gua sadar kita sefrekuensii ni klo lu g kirim mootor panjang itu pastii kita g bestiee ini bro, broo jagain Ellen yak bro gua percaya sama lu, tapi bedain la bro bercanda sm tmn sm pacar gmn yak bro, pikirin perasaan ellen yak broo.. broo smngtt keren bett broo udh bisa bikin semua org ketawa dngn kekonyolan lu brok, gua ngakak bngt pas lu ketawa atau tb tb goblok wkwk, pastii org org beruntung deh bisa punya tmn sekonyol dan seseru luk brok, tq yak broo udh milih alfa dr pd lawson wkwk, lancar lancar trs yak bro lulusnya, kerjanya, semoga langgeng trs, jngn lupa undaang yang brok pas nikah 🤩, lu sekarang gemoyy man, penasaran gua nnt pas nikah lu gmn WKWKWK NGAKAKAKK semoga kedepannya lu jadi lebih baik yak broo, nnt kalau kita reuni tolongg bantuu urus yak mann semoga kita ketemu lagi dan inget masa masa konyol babi ini HAHAHAH' },
+        'Haekal': { password: '333435', message: 'CIEEEE LAGIII BUKAA NI YEE.....HAEKALL🗣🗣🗣. Tq yak kal baek bener dah awal awal walaupun akhirnya jahat sm gue HAHAHAH canda, makasii loh kal baik juga lu jadi tmn kadang gua nanya ngasal tp diseriusin, maaf ya kal kalo gua bnyk SALAHH ahahahah ngakak, percaya la niat gua cmn gangguin aja emg kadang suka seneng liat orang kesel wkwk, maaf maaf, ohh yaa bilng Nidaaa g ada niatt guee, gua g aja g pernh chttn sm lu bjirr, klo yang dm, itu gr gr gua sm ank ank lg stalk lu trs ya komen aja, cinta jg gt kok, so maaf pwoll bosqueee, im so srryy, makasii yakk udh keren batt dah jadi tmn baek bnrr nawarin rumah buat inepin sm tmn tmn nakal lu itu hahahah, oh yaa langgeng trs yak brooh, sukses selalu, lancar lulusnya,kerjanya, nikahnya… jagn lupaa undangannya yak broo, semoga lu happy trss yak kdepnnya, maaf batt ya awal awl gua bnr bnr g mauu anj jd moderator tai luu, gua bnr bnr g mau anj, kek itu hari memalukan gua, tapi setelah kak kornel bilng gua betapa capek nya eluu usaha lu terharu🥹, kerenn deh kall luu tqq yak udh atur semua acaranya udh smngttin semua ank ank panit jugaa kerenn brok gua g tau ni lu baca ini gradu dah kelar apa blm, kalo udh selamat istrhtt broook, saatnya skripsian, sukses selalu yak brooo🤩🤩🤩🤩' },
+        'Daffa': { password: '383940', message: 'CIEEEE LAGIII BUKAA NI YEE.....Daffaaaa🗣🗣. Tq yak broo udh jadi teman yang baik nan sopan. Broo luu percaya la kita semua sayang sm loo ANJAYY. Jadi klo sometimes lu merasa ank ank jahat ngomongnya atau gmn, percaya lah g ada niat jahatt broo, ya lu tau la awalnya dari cewe itu heheheh, gua jugaa percaya kok semua orang itu baik, tapiii mungkin di saat ini situasinya dia sedang tidak baik aja tu cewenya mknnya kadang sakit dikit kan luu, gpp dah bnr kok luu dikitt wkwkw, enjoyy ajaa broo HAHAHAAH, tapii intinya klo hubungann lu sm dia berhasil brrti lu bisa buktiin ke kita dia berubah karena dengan ada lo, tapii klo endingnya sesuai ekspetasi kitaa apalagi guee, tolong diinget inget lg dari awal kita udh bilng, jadi we are still friends yak broo, oh yaa capek gua ngomongin cewe itu, bentar lg lu lulus kan? Lancar yaa nnt lulusnyaa, kerjanya, jodohnyaa juga jan lupaa, lu dah oke bngtt kok nge treat cewek, tp yaa mungkin blm keliatan psti aja jodoh lu sp yak broo, sukses selalu brooo, klo nikah berkabar yak broo🥰🤩🤩' },
+        'Maul': { password: '414243', message: 'CIEEEE LAGIII BUKAA NI YEE.....ABDULLLL🗣🗣 Tq yak broo udh jadi cowok yang sngtt frendlu hahahah, ohh yaaa jangann gamonn brook, yuk ilangin lagii kemayunya wkkwk, biar cpt dpt cewe dan g gamon lgg, keren broo kelar unggulann wkwkwk, seorang maull loh wkwkwk, ternyata yang paling pinterr cok wkwkw, maaf yak broo klo dah 2x ni gua marah sm lu, soalnya lu kenya g sadar klo lu memaksakan kemauan lu, tp okee kok broo lu pelan pelan pasti terbiasa bro, luu perfect except 2 hal ada bro sejauh ini 1. Kemayu, 2. Pikirin pendaptn org lain. ANJY, dah la ya ini ma karena kita masi remaja aja anjyy remaja ga tu, smngtt yak bro bentar lagi luluss nii, lancar ya lulusnya, kerjanya, jodohnya.. nikahnya juga kabarinn broook.. semogaa happy happy trs yak bro kedepannya makasii yak brooo udh jadi temen yang selalu bisa buat orang orang ketawa full tengg broo, klo g ada lu maybe g seseru ini brook wwkk sukses selalu bro' },
+        'Ichsan': { password: '444546', message: 'CIEEEE LAGIII BUKAA NI YEE.....ICHSANNN🗣🗣🗣Semngttt yakk brooo, keren bett bro projek balik banyakk lohh wkkw, oh ya makasii yak san udah boncengg gueee pas ke villa pastii lu capek bett yakk wkwkwk, oh ya sann lu sbnrnya kocak bet cok anaknyaa, tapi ya g mau ngomong aje luu, tapi klo diajak becanda orng jngn bnrn seriusss mana ada orangg bilngg iya gua emg g asik anj lu wkwk, kecuali kloo udh lama ni main pasti orng ketawa wkwk dianggep bercandaa wkw, tpp tq yak broo udh main banyak dan support pertemenan kita yang sngtt singkat ini broo, gua yakinn bett lu bakal sukses broo kedepnnyaa, tapii lu skrng udh ada perkembangan bngt loo yaa dari 0% g ngomong skrng udh jadi 5 persen lahh, anjyy wkwkwk, bntr lg luluss ni sann lancarr yak lulusnyaa, kerjanyaa jugaa, oh yaa sann lu harus bljrr kenal cewek yaak sann, lu mau hidup gini trs?? Ini tu bagai hidup tanpa cinta bagai taman tan berbunga brooo wkkwk, cobain dah pasti lu bakal berbunga bungaa brooo, inget klo nikah kabarinn yakkkk🤩🤩🤩🤩🤩' },
+        'Tasya': { password: '474849', message: 'CIEEEE LAGIII BUKAA NI YEE.....TASYAA🗣🗣🗣tq yak syaaa udah jadi temen berangkat-pulang barengg, udah berbagi ceritaa bareng jugaaa, udh ngomongin masa depan bareng juga anj GoKiL wkwk, ya walaupun akhirnya lt 20 sm 19 masi blm bisa maen bareng yakk.. tapi ydh gradu juga udah bareng bareng wkwk, makasii bnyakk yakk syaa udh jadi positive support buat gua jugaa, lu keren bbgtt sya bisa ngerangkul tmn tmn lu juga, ngadepin divisi lu dengan bijak juga, apalagi mentor lu yang sngtt sibukk, dan ttp bertahan walaupun pastii ada hal hal yang g enak ke elu, kerenn batt syaa lu juga berusaha biar g ada yaa masalah masalah lah sm tmn lu, keren deh lu ttp bisa keep pertemanan lu sejauh ini padahl ini singkat bngtt durasinya, semogaaa luu bisa gapai cita cita lu yakk jadi PNSS babe bahagiain orang tua lu juga, oh yaaa jangan gamonn yaaa syaaa wkwk, gua yakin lu baik dan lu juga deserve dapet yang terbaik, semogaa skripsian nnt lancarr yakk, lancar juga kerjanyaaa, dan ga lupa jodohnyaaaa🤩🤩🤩🥰🥰🥰, klo nikahh jngn lupaa laa undangannyaaa yakk 😍😍😍' }
     };
 
     let currentName = '';
 
-    function showPassword(name) {
+    // Generate Buttons
+    const buttonList = document.getElementById('buttonList');
+    for (let name in friends) {
+        buttonList.innerHTML += `<button class="btn-name" onclick="showModal('${name}')">${name}</button>`;
+    }
+
+    function showModal(name) {
         currentName = name;
-        document.getElementById('passwordForm').style.display = 'block';
-        document.getElementById('message').innerHTML = '';
+        document.getElementById('passwordModal').style.display = 'flex';
         document.getElementById('passwordInput').value = '';
+        document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('passwordInput').focus();
+    }
+
+    function closeModal() {
+        document.getElementById('passwordModal').style.display = 'none';
+    }
+
+    function checkEnter(event) {
+        if (event.key === 'Enter') checkPassword();
     }
 
     function checkPassword() {
-        const passwordInput = document.getElementById('passwordInput').value;
-        if (correctPasswords[currentName] && passwordInput === correctPasswords[currentName].password) {
-            document.getElementById('message').innerHTML = `Selamat datang, ${currentName}! 🌟<br><strong>${correctPasswords[currentName].message}</strong>`;
+        const inputPassword = document.getElementById('passwordInput').value;
+        if (inputPassword === friends[currentName].password) {
+            document.getElementById('passwordModal').style.display = 'none';
+            document.getElementById('nameContainer').style.display = 'none';
+            document.getElementById('message').innerHTML = `
+                <div class="message-box">
+                    <p>${friends[currentName].message}</p>
+                    <button class="back-btn" onclick="goBackToMenu()">Back to Menu</button>
+                </div>
+            `;
         } else {
-            document.getElementById('message').innerHTML = '❌ Password salah, coba lagi.';
+            document.getElementById('errorMessage').style.display = 'block';
         }
+    }
+
+    function goBackToMenu() {
+        document.getElementById('message').innerHTML = '';
+        document.getElementById('nameContainer').style.display = 'block';
     }
 </script>
 
