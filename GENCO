@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Shopee Link Cleaner</title>
+</head>
+<body>
+  <h2>Shopee Rebate Link Cleaner</h2>
+
+  <input id="linkInput" style="width:400px" 
+         placeholder="Paste short link Shopee di sini">
+  <button onclick="cleanLink()">Clean Link</button>
+
+  <p>Result:</p>
+  <textarea id="result" style="width:400px;height:80px"></textarea>
+
+<script>
+async function cleanLink() {
+  const shortLink = document.getElementById("linkInput").value;
+
+  try {
+    // follow redirect
+    const response = await fetch(shortLink, {
+      method: "GET",
+      redirect: "follow"
+    });
+
+    const finalUrl = response.url;
+
+    // hapus query params
+    const cleanUrl = finalUrl.split("?")[0];
+
+    document.getElementById("result").value = cleanUrl;
+
+  } catch (e) {
+    alert("Gagal ambil link, kemungkinan kena CORS.");
+  }
+}
+</script>
+
+</body>
+</html>
